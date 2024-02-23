@@ -2,7 +2,9 @@ name: Version Bump on PR Merge
 
 on:
   pull_request:
-    branches: [ main ]
+    types: [closed]
+    branches:
+      - main
 
 jobs:
   version-bump:
