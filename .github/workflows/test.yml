@@ -24,13 +24,13 @@ jobs:
         run: |
           # Fetch all commits associated with the closed PR
           # PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMITS=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits")
+          COMMITS=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/3/commits")
           MAJOR_WORDS="break|breaking|breaks|removed|removes|remove|major"
           MINOR_WORDS="feat|feature|epic|new|add|adds|added|implement|implements|implemented|implementing|enhance|enhances|enhanced|enhancing|improve|improves|improved|improving|upgrade|upgrades|upgraded|upgrading|update|deprecate|deprecates|deprecating|deprecation"
           PATCH_WORDS="fix|fixes|issue|bug|patch|documentation|doc|docs|typo|refactor|refactors|refactored|refactoring|perf|performance|test|tests|testing|ci|build|chore|style|styles|format|lint|lints|linting|security|secure|secures|hotfix|hot-fix"
 
           echo $COMMITS
-          
+
           VERSION_BUMP=""
 
           for COMMIT in $COMMITS; do
