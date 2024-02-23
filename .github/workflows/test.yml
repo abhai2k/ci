@@ -1,0 +1,64 @@
+name: Dummy Run
+
+on:
+  push:
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Bump version based on commit messages
+        run: |
+          # Fetch all commits associated with the closed PR
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          COMMITS=$(curl -s -H "Authorization: Bearer ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits")
+          MAJOR_WORDS="break|breaking|breaks|removed|removes|remove|major"
+          MINOR_WORDS="feat|feature|epic|new|add|adds|added|implement|implements|implemented|implementing|enhance|enhances|enhanced|enhancing|improve|improves|improved|improving|upgrade|upgrades|upgraded|upgrading|update|deprecate|deprecates|deprecating|deprecation"
+          PATCH_WORDS="fix|fixes|issue|bug|patch|documentation|doc|docs|typo|refactor|refactors|refactored|refactoring|perf|performance|test|tests|testing|ci|build|chore|style|styles|format|lint|lints|linting|security|secure|secures|hotfix|hot-fix"
+
+          VERSION_BUMP=""
+
+          for COMMIT in $COMMITS; do
+            MESSAGE=$(echo $COMMIT | jq -r '.commit.message')
+
+            if [[ "$MESSAGE" =~ $MAJOR_WORDS ]]; then
+              VERSION_BUMP="major"
+              break
+            elif [[ "$MESSAGE" =~ $MINOR_WORDS ]]; then
+              VERSION_BUMP="minor"
+            elif [[ "$MESSAGE" =~ $PATCH_WORDS ]] && [ -z "$VERSION_BUMP" ]; then
+              VERSION_BUMP="patch"
+            fi
+          done
+
+          if [ ! -z "$VERSION_BUMP" ]; then
+            echo "Bumping $VERSION_BUMP version..."
+            npm version $VERSION_BUMP
+            echo $VERSION_BUMP
+            # git push --follow-tags -m "chore - Add tag for version $NEXT_TAG"
+          else
+            echo "No version keywords found, not bumping version."
+          fi
+        # env:
+        #   GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      # - name: Push changes
+      #   run: |
+      #     git config --global user.email "action@github.com"
+      #     git config --global user.name "GitHub Action"
+      #     git push --follow-tags
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
