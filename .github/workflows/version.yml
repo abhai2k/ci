@@ -28,7 +28,7 @@ jobs:
         run: |
           # Fetch all commits associated with the closed PR
           PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMITS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/commits")
+          COMMITS=$(curl -s -H "Authorization: Bearer ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/commits")
           MAJOR_WORDS="break|breaking|breaks|removed|removes|remove|major"
           MINOR_WORDS="feat|feature|epic|new|add|adds|added|implement|implements|implemented|implementing|enhance|enhances|enhanced|enhancing|improve|improves|improved|improving|upgrade|upgrades|upgraded|upgrading|update|deprecate|deprecates|deprecating|deprecation"
           PATCH_WORDS="fix|fixes|issue|bug|patch|documentation|doc|docs|typo|refactor|refactors|refactored|refactoring|perf|performance|test|tests|testing|ci|build|chore|style|styles|format|lint|lints|linting|security|secure|secures|hotfix|hot-fix"
@@ -55,8 +55,8 @@ jobs:
           else
             echo "No version keywords found, not bumping version."
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
 
       # - name: Push changes
       #   run: |
@@ -64,4 +64,4 @@ jobs:
       #     git config --global user.name "GitHub Action"
       #     git push --follow-tags
       #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
