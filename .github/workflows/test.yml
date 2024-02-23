@@ -29,6 +29,8 @@ jobs:
           MINOR_WORDS="feat|feature|epic|new|add|adds|added|implement|implements|implemented|implementing|enhance|enhances|enhanced|enhancing|improve|improves|improved|improving|upgrade|upgrades|upgraded|upgrading|update|deprecate|deprecates|deprecating|deprecation"
           PATCH_WORDS="fix|fixes|issue|bug|patch|documentation|doc|docs|typo|refactor|refactors|refactored|refactoring|perf|performance|test|tests|testing|ci|build|chore|style|styles|format|lint|lints|linting|security|secure|secures|hotfix|hot-fix"
 
+          echo $COMMITS
+          
           VERSION_BUMP=""
 
           for COMMIT in $COMMITS; do
